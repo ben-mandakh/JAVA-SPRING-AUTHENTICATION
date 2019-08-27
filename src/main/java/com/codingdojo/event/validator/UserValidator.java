@@ -1,8 +1,9 @@
-package com.codingdojo.authentication.validator;
+package com.codingdojo.event.validator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import com.codingdojo.authentication.models.User;
+
+import com.codingdojo.event.models.User;
 @Component
 public class UserValidator implements Validator {
     

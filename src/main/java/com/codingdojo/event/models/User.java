@@ -1,12 +1,18 @@
-package com.codingdojo.authentication.models;
+package com.codingdojo.event.models;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -28,6 +34,10 @@ public class User {
     private String firstname;
 	@Size(min=3, message = "Lastname must be greater than 3 characters!")
     private String lastname;
+	@Size(min=1, message = "Location is required!")
+    private String location;
+	@Size(min=1, message = "State is required!")
+	private String state;
 	@Email(message = "Email must be valid!")
     private String email;
 	@Size(min=5, message = "Password must be greater than 5 characters!")
@@ -40,25 +50,73 @@ public class User {
     @DateTimeFormat(pattern="yyyy-MM-DD")
     private Date updatedAt;
     
+    //////////// RELATIONSHIP ///////////////
+    
+    @OneToMany(mappedBy="user", fetch = FetchType.LAZY)
+    private List<Event> event;
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(
+		name = "events_users",
+		joinColumns = @JoinColumn(name = "user_id"),
+		inverseJoinColumns = @JoinColumn(name = "event_id")
+	)
+	private List<Event> events;
+    
+    
+    ////////////////////////////////////////////
+    
     public User() {}
 
 	public User(Long id, @Size(min = 3, message = "Firstname must be greater than 3 characters!") String firstname,
 			@Size(min = 3, message = "Lastname must be greater than 3 characters!") String lastname,
+			@Size(min = 1, message = "Location is required!") String location,
+			@Size(min = 1, message = "State is required!") String state,
 			@Email(message = "Email must be valid!") String email,
 			@Size(min = 5, message = "Password must be greater than 5 characters!") String password,
-			String passwordConfirmation, Date createdAt, Date updatedAt) {
+			String passwordConfirmation, Date createdAt, Date updatedAt, List<Event> event, List<Event> events) {
 		super();
 		this.id = id;
 		this.firstname = firstname;
 		this.lastname = lastname;
+		this.location = location;
+		this.state = state;
 		this.email = email;
 		this.password = password;
 		this.passwordConfirmation = passwordConfirmation;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+		this.event = event;
+		this.events = events;
 	}
 
-    public Long getId() {
+
+
+	public List<Event> getEvent() {
+		return event;
+	}
+
+	public void setEvent(List<Event> event) {
+		this.event = event;
+	}
+
+	public List<Event> getEvents() {
+		return event;
+	}
+
+	public void setEvents(List<Event> events) {
+		this.event = events;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	public Long getId() {
 		return id;
 	}
 
@@ -80,6 +138,14 @@ public class User {
 
 	public void setLastname(String lastname) {
 		this.lastname = lastname;
+	}
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 	public String getEmail() {
